@@ -1,0 +1,43 @@
+From 87cff1025ac5b807953994a1d93e4a09eaa92e3a Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Fri, 28 Feb 2020 19:06:45 -0600
+Subject: [PATCH 23/24] crypto/nx: Remove 'pid' in vas_tx_win_attr struct
+
+When window is opened, pid reference is taken for user space
+windows. Not needed for kernel windows. So remove 'pid' in
+vas_tx_win_attr struct.
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ arch/powerpc/include/asm/vas.h        | 1 -
+ drivers/crypto/nx/nx-common-powernv.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/vas.h b/arch/powerpc/include/asm/vas.h
+index e06495385149..994db6f41a19 100644
+--- a/arch/powerpc/include/asm/vas.h
++++ b/arch/powerpc/include/asm/vas.h
+@@ -86,7 +86,6 @@ struct vas_tx_win_attr {
+ 	int wcreds_max;
+ 	int lpid;
+ 	int pidr;		/* hardware PID (from SPRN_PID) */
+-	int pid;		/* linux process id */
+ 	int pswid;
+ 	int rsvd_txbuf_count;
+ 	int tc_mode;
+diff --git a/drivers/crypto/nx/nx-common-powernv.c b/drivers/crypto/nx/nx-common-powernv.c
+index f57069126f52..38333e475097 100644
+--- a/drivers/crypto/nx/nx-common-powernv.c
++++ b/drivers/crypto/nx/nx-common-powernv.c
+@@ -692,7 +692,6 @@ static struct vas_window *nx_alloc_txwin(struct nx_coproc *coproc)
+ 	 */
+ 	vas_init_tx_win_attr(&txattr, coproc->ct);
+ 	txattr.lpid = 0;	/* lpid is 0 for kernel requests */
+-	txattr.pid = 0;		/* pid is 0 for kernel requests */
+ 
+ 	/*
+ 	 * Open a VAS send window which is used to send request to NX.
+-- 
+2.25.3
+

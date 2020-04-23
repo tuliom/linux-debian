@@ -1,0 +1,25 @@
+From 05dfc69f448d19025dac0d606292d777ab1124a0 Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Tue, 14 Apr 2020 01:01:10 -0500
+Subject: [PATCH 15/24] makefile changes for build
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 4d0711f54047..241ed5df6b10 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 5
+ PATCHLEVEL = 6
+ SUBLEVEL = 0
+-EXTRAVERSION =
++EXTRAVERSION =-nxgzipv3
+ NAME = Kleptomaniac Octopus
+ 
+ # *DOCUMENTATION*
+-- 
+2.25.3
+

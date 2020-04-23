@@ -1,0 +1,92 @@
+From 52365902608291660e7a130b80953dd7c14659a3 Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Fri, 6 Dec 2019 21:25:27 -0600
+Subject: [PATCH 05/24] powerpc/vas: Register NX with fault window ID and IRQ
+ port value
+
+For each user space send window, register NX with fault window ID
+and port value so that NX paste CRBs in this fault FIFO when it
+sees fault on the request buffer.
+
+Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+---
+ arch/powerpc/platforms/powernv/vas-window.c | 15 +++++++++++++--
+ arch/powerpc/platforms/powernv/vas.h        | 15 +++++++++++++++
+ 2 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
+index 1783fa9b4298..dc46bf6d6149 100644
+--- a/arch/powerpc/platforms/powernv/vas-window.c
++++ b/arch/powerpc/platforms/powernv/vas-window.c
+@@ -373,7 +373,7 @@ int init_winctx_regs(struct vas_window *window, struct vas_winctx *winctx)
+ 	init_xlate_regs(window, winctx->user_win);
+ 
+ 	val = 0ULL;
+-	val = SET_FIELD(VAS_FAULT_TX_WIN, val, 0);
++	val = SET_FIELD(VAS_FAULT_TX_WIN, val, winctx->fault_win_id);
+ 	write_hvwc_reg(window, VREG(FAULT_TX_WIN), val);
+ 
+ 	/* In PowerNV, interrupts go to HV. */
+@@ -748,6 +748,8 @@ static void init_winctx_for_rxwin(struct vas_window *rxwin,
+ 
+ 	winctx->min_scope = VAS_SCOPE_LOCAL;
+ 	winctx->max_scope = VAS_SCOPE_VECTORED_GROUP;
++	if (rxwin->vinst->virq)
++		winctx->irq_port = rxwin->vinst->irq_port;
+ }
+ 
+ static bool rx_win_args_valid(enum vas_cop_type cop,
+@@ -944,13 +946,22 @@ static void init_winctx_for_txwin(struct vas_window *txwin,
+ 	winctx->lpid = txattr->lpid;
+ 	winctx->pidr = txattr->pidr;
+ 	winctx->rx_win_id = txwin->rxwin->winid;
++	/*
++	 * IRQ and fault window setup is successful. Set fault window
++	 * for the send window so that ready to handle faults.
++	 */
++	if (txwin->vinst->virq)
++		winctx->fault_win_id = txwin->vinst->fault_win->winid;
+ 
+ 	winctx->dma_type = VAS_DMA_TYPE_INJECT;
+ 	winctx->tc_mode = txattr->tc_mode;
+ 	winctx->min_scope = VAS_SCOPE_LOCAL;
+ 	winctx->max_scope = VAS_SCOPE_VECTORED_GROUP;
++	if (txwin->vinst->virq)
++		winctx->irq_port = txwin->vinst->irq_port;
+ 
+-	winctx->pswid = 0;
++	winctx->pswid = txattr->pswid ? txattr->pswid :
++			encode_pswid(txwin->vinst->vas_id, txwin->winid);
+ }
+ 
+ static bool tx_win_args_valid(enum vas_cop_type cop,
+diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
+index 9c8e3f588ada..88d084d3bfd9 100644
+--- a/arch/powerpc/platforms/powernv/vas.h
++++ b/arch/powerpc/platforms/powernv/vas.h
+@@ -467,6 +467,21 @@ static inline u64 read_hvwc_reg(struct vas_window *win,
+ 	return in_be64(win->hvwc_map+reg);
+ }
+ 
++/*
++ * Encode/decode the Partition Send Window ID (PSWID) for a window in
++ * a way that we can uniquely identify any window in the system. i.e.
++ * we should be able to locate the 'struct vas_window' given the PSWID.
++ *
++ *	Bits	Usage
++ *	0:7	VAS id (8 bits)
++ *	8:15	Unused, 0 (3 bits)
++ *	16:31	Window id (16 bits)
++ */
++static inline u32 encode_pswid(int vasid, int winid)
++{
++	return ((u32)winid | (vasid << (31 - 7)));
++}
++
+ static inline void decode_pswid(u32 pswid, int *vasid, int *winid)
+ {
+ 	if (vasid)
+-- 
+2.25.3
+

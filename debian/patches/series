@@ -144,3 +144,27 @@ bugfix/all/0005-libtraceevent-Add-dependency-on-libdl.patch
 debian/overlayfs-permit-mounts-in-userns.patch
 
 # ABI maintenance
+features/powerpc/nxgzip/0001-powerpc-xive-Define-xive_native_alloc_irq_on_chip.patch
+features/powerpc/nxgzip/0002-powerpc-vas-Define-nx_fault_stamp-in-coprocessor_req.patch
+features/powerpc/nxgzip/0003-powerpc-vas-Alloc-and-setup-IRQ-and-trigger-port-add.patch
+features/powerpc/nxgzip/0004-powerpc-vas-Setup-fault-window-per-VAS-instance.patch
+features/powerpc/nxgzip/0005-powerpc-vas-Register-NX-with-fault-window-ID-and-IRQ.patch
+features/powerpc/nxgzip/0006-powerpc-vas-Take-reference-to-PID-and-mm-for-user-sp.patch
+features/powerpc/nxgzip/0007-powerpc-vas-Setup-thread-IRQ-handler-per-VAS-instanc.patch
+features/powerpc/nxgzip/0008-powerpc-vas-Update-CSB-and-notify-process-for-fault-.patch
+features/powerpc/nxgzip/0009-powerpc-vas-Return-credits-after-handling-fault.patch
+features/powerpc/nxgzip/0010-powerpc-vas-Print-CRB-and-FIFO-values.patch
+features/powerpc/nxgzip/0011-powerpc-vas-Do-not-use-default-credits-for-receive-w.patch
+features/powerpc/nxgzip/0012-powerpc-vas-Display-process-stuck-message.patch
+features/powerpc/nxgzip/0013-powerpc-vas-Free-send-window-in-VAS-instance-after-c.patch
+features/powerpc/nxgzip/0014-powerpc-Use-mm_context-vas_windows-counter-to-issue-.patch
+# Unnecessary - features/powerpc/nxgzip/0015-makefile-changes-for-build.patch
+features/powerpc/nxgzip/0016-powerpc-vas-Initialize-window-attributes-for-GZIP-co.patch
+features/powerpc/nxgzip/0017-powerpc-vas-Define-VAS_TX_WIN_OPEN-ioctl-API.patch
+features/powerpc/nxgzip/0018-powerpc-vas-Add-VAS-user-space-API.patch
+features/powerpc/nxgzip/0019-crypto-nx-Initialize-coproc-entry-with-kzalloc.patch
+features/powerpc/nxgzip/0020-crypto-nx-Rename-nx-842-powernv-file-name-to-nx-comm.patch
+features/powerpc/nxgzip/0021-crypto-nx-Make-enable-code-generic-to-add-new-GZIP-c.patch
+features/powerpc/nxgzip/0022-crypto-nx-Enable-and-setup-GZIP-compresstion-type.patch
+features/powerpc/nxgzip/0023-crypto-nx-Remove-pid-in-vas_tx_win_attr-struct.patch
+features/powerpc/nxgzip/0024-Documentation-powerpc-VAS-API.patch

@@ -1,0 +1,60 @@
+From 631edb53680b9821df122c7b01ed6a20cb34aa22 Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Sat, 21 Sep 2019 04:36:28 -0500
+Subject: [PATCH 17/24] powerpc/vas: Define VAS_TX_WIN_OPEN ioctl API
+
+Define the VAS_TX_WIN_OPEN ioctl interface for NX GZIP access
+from user space. This interface is used to open GZIP send window and
+mmap region which can be used by userspace to send requests to NX
+directly with copy/paste instructions.
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+---
+ .../userspace-api/ioctl/ioctl-number.rst      |  1 +
+ arch/powerpc/include/uapi/asm/vas-api.h       | 22 +++++++++++++++++++
+ 2 files changed, 23 insertions(+)
+ create mode 100644 arch/powerpc/include/uapi/asm/vas-api.h
+
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index f759edafd938..f18accb1bcd8 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -286,6 +286,7 @@ Code  Seq#    Include File                                           Comments
+ 'v'   00-1F  linux/fs.h                                              conflict!
+ 'v'   00-0F  linux/sonypi.h                                          conflict!
+ 'v'   00-0F  media/v4l2-subdev.h                                     conflict!
++'v'   20-27  arch/powerpc/include/uapi/asm/vas-api.h		     VAS API
+ 'v'   C0-FF  linux/meye.h                                            conflict!
+ 'w'   all                                                            CERN SCI driver
+ 'y'   00-1F                                                          packet based user level communications
+diff --git a/arch/powerpc/include/uapi/asm/vas-api.h b/arch/powerpc/include/uapi/asm/vas-api.h
+new file mode 100644
+index 000000000000..fe95d67e3bab
+--- /dev/null
++++ b/arch/powerpc/include/uapi/asm/vas-api.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/*
++ * Copyright 2019 IBM Corp.
++ */
++
++#ifndef _UAPI_MISC_VAS_H
++#define _UAPI_MISC_VAS_H
++
++#include <asm/ioctl.h>
++
++#define VAS_MAGIC	'v'
++#define VAS_TX_WIN_OPEN	_IOW(VAS_MAGIC, 0x20, struct vas_tx_win_open_attr)
++
++struct vas_tx_win_open_attr {
++	__u32	version;
++	__s16	vas_id;	/* specific instance of vas or -1 for default */
++	__u16	reserved1;
++	__u64	flags;	/* Future use */
++	__u64	reserved2[6];
++};
++
++#endif /* _UAPI_MISC_VAS_H */
+-- 
+2.25.3
+

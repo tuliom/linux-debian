@@ -39,6 +39,7 @@ CONFIG_NR_CPUS=2048
 ## file: arch/powerpc/platforms/powernv/Kconfig
 ##
 CONFIG_OPAL_PRD=m
+CONFIG_PPC_VAS=y
 
 ##
 ## file: arch/powerpc/platforms/pseries/Kconfig
@@ -76,7 +77,7 @@ CONFIG_CRYPTO_DEV_VMX=y
 CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
 CONFIG_CRYPTO_DEV_NX_COMPRESS=m
 CONFIG_CRYPTO_DEV_NX_COMPRESS_PSERIES=m
-CONFIG_CRYPTO_DEV_NX_COMPRESS_POWERNV=m
+CONFIG_CRYPTO_DEV_NX_COMPRESS_POWERNV=y
 
 ##
 ## file: drivers/crypto/vmx/Kconfig

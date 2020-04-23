@@ -1,0 +1,34 @@
+From eda882b3b0c3121acdf00b60a61980464071340f Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Sat, 14 Dec 2019 19:33:59 -0600
+Subject: [PATCH 19/24] crypto/nx: Initialize coproc entry with kzalloc
+
+coproc entry is initialized during NX probe on power9, but not on P8.
+nx842_delete_coprocs() is used for both and frees receive window if it
+is allocated. Getting crash for rmmod on P8 since coproc->vas.rxwin
+is not initialized.
+
+This patch replaces kmalloc with kzalloc in nx842_powernv_probe()
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/crypto/nx/nx-842-powernv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/nx/nx-842-powernv.c b/drivers/crypto/nx/nx-842-powernv.c
+index c037a2403b82..8e63326f0866 100644
+--- a/drivers/crypto/nx/nx-842-powernv.c
++++ b/drivers/crypto/nx/nx-842-powernv.c
+@@ -922,7 +922,7 @@ static int __init nx842_powernv_probe(struct device_node *dn)
+ 		return -EINVAL;
+ 	}
+ 
+-	coproc = kmalloc(sizeof(*coproc), GFP_KERNEL);
++	coproc = kzalloc(sizeof(*coproc), GFP_KERNEL);
+ 	if (!coproc)
+ 		return -ENOMEM;
+ 
+-- 
+2.25.3
+

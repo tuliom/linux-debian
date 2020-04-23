@@ -1,0 +1,58 @@
+From 87b5d26de6f3a760807c242b094bdf7f5cae0c93 Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Sat, 7 Dec 2019 02:13:11 -0600
+Subject: [PATCH 11/24] powerpc/vas: Do not use default credits for receive
+ window
+
+System checkstops if RxFIFO overruns with more requests than the
+maximum possible number of CRBs allowed in FIFO at any time. So
+max credits value (rxattr.wcreds_max) is set and is passed to
+vas_rx_win_open() by the the driver.
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+---
+ arch/powerpc/platforms/powernv/vas-window.c | 4 ++--
+ arch/powerpc/platforms/powernv/vas.h        | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
+index 3ef71209ff58..4b5adf521882 100644
+--- a/arch/powerpc/platforms/powernv/vas-window.c
++++ b/arch/powerpc/platforms/powernv/vas-window.c
+@@ -772,7 +772,7 @@ static bool rx_win_args_valid(enum vas_cop_type cop,
+ 	if (attr->rx_fifo_size > VAS_RX_FIFO_SIZE_MAX)
+ 		return false;
+ 
+-	if (attr->wcreds_max > VAS_RX_WCREDS_MAX)
++	if (!attr->wcreds_max)
+ 		return false;
+ 
+ 	if (attr->nx_win) {
+@@ -877,7 +877,7 @@ struct vas_window *vas_rx_win_open(int vasid, enum vas_cop_type cop,
+ 	rxwin->nx_win = rxattr->nx_win;
+ 	rxwin->user_win = rxattr->user_win;
+ 	rxwin->cop = cop;
+-	rxwin->wcreds_max = rxattr->wcreds_max ?: VAS_WCREDS_DEFAULT;
++	rxwin->wcreds_max = rxattr->wcreds_max;
+ 
+ 	init_winctx_for_rxwin(rxwin, rxattr, &winctx);
+ 	init_winctx_regs(rxwin, &winctx);
+diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
+index efdaa28d9294..32b526164bd2 100644
+--- a/arch/powerpc/platforms/powernv/vas.h
++++ b/arch/powerpc/platforms/powernv/vas.h
+@@ -101,11 +101,9 @@
+ /*
+  * Initial per-process credits.
+  * Max send window credits:    4K-1 (12-bits in VAS_TX_WCRED)
+- * Max receive window credits: 64K-1 (16 bits in VAS_LRX_WCRED)
+  *
+  * TODO: Needs tuning for per-process credits
+  */
+-#define VAS_RX_WCREDS_MAX		((64 << 10) - 1)
+ #define VAS_TX_WCREDS_MAX		((4 << 10) - 1)
+ #define VAS_WCREDS_DEFAULT		(1 << 10)
+ 
+-- 
+2.25.3
+

@@ -1,0 +1,38 @@
+From 1920461bda456e50dd1a29c29c18ae1520bbc49c Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Fri, 20 Sep 2019 14:33:38 -0500
+Subject: [PATCH 13/24] powerpc/vas: Free send window in VAS instance after
+ credits returned
+
+NX may be processing requests while trying to close window. Wait until
+all credits are returned and then free send window from VAS instance.
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+---
+ arch/powerpc/platforms/powernv/vas-window.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
+index 3d80f37181bc..3ffad5a45f01 100644
+--- a/arch/powerpc/platforms/powernv/vas-window.c
++++ b/arch/powerpc/platforms/powernv/vas-window.c
+@@ -1316,14 +1316,14 @@ int vas_win_close(struct vas_window *window)
+ 
+ 	unmap_paste_region(window);
+ 
+-	clear_vinst_win(window);
+-
+ 	poll_window_busy_state(window);
+ 
+ 	unpin_close_window(window);
+ 
+ 	poll_window_credits(window);
+ 
++	clear_vinst_win(window);
++
+ 	poll_window_castout(window);
+ 
+ 	/* if send window, drop reference to matching receive window */
+-- 
+2.25.3
+

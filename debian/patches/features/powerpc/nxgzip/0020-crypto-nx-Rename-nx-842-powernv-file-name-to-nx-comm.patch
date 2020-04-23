@@ -1,0 +1,55 @@
+From 59daafda17aa73c6da69e4b8ccedf7e8dcdb906b Mon Sep 17 00:00:00 2001
+From: Haren Myneni <haren@us.ibm.com>
+Date: Fri, 28 Feb 2020 18:24:43 -0600
+Subject: [PATCH 20/24] crypto/nx: Rename nx-842-powernv file name to
+ nx-common-powernv
+
+Rename nx-842-powernv.c to nx-common-powernv.c to add code for setup
+and enable new GZIP compression type. The actual functionality is not
+changed in this patch.
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/crypto/nx/Makefile                                  | 2 +-
+ drivers/crypto/nx/{nx-842-powernv.c => nx-common-powernv.c} | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+ rename drivers/crypto/nx/{nx-842-powernv.c => nx-common-powernv.c} (99%)
+
+diff --git a/drivers/crypto/nx/Makefile b/drivers/crypto/nx/Makefile
+index 015155da59c2..bc89a20e5d9d 100644
+--- a/drivers/crypto/nx/Makefile
++++ b/drivers/crypto/nx/Makefile
+@@ -15,4 +15,4 @@ obj-$(CONFIG_CRYPTO_DEV_NX_COMPRESS_PSERIES) += nx-compress-pseries.o nx-compres
+ obj-$(CONFIG_CRYPTO_DEV_NX_COMPRESS_POWERNV) += nx-compress-powernv.o nx-compress.o
+ nx-compress-objs := nx-842.o
+ nx-compress-pseries-objs := nx-842-pseries.o
+-nx-compress-powernv-objs := nx-842-powernv.o
++nx-compress-powernv-objs := nx-common-powernv.o
+diff --git a/drivers/crypto/nx/nx-842-powernv.c b/drivers/crypto/nx/nx-common-powernv.c
+similarity index 99%
+rename from drivers/crypto/nx/nx-842-powernv.c
+rename to drivers/crypto/nx/nx-common-powernv.c
+index 8e63326f0866..f42881fbed2f 100644
+--- a/drivers/crypto/nx/nx-842-powernv.c
++++ b/drivers/crypto/nx/nx-common-powernv.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * Driver for IBM PowerNV 842 compression accelerator
++ * Driver for IBM PowerNV compression accelerator
+  *
+  * Copyright (C) 2015 Dan Streetman, IBM Corp
+  */
+@@ -20,7 +20,7 @@
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Dan Streetman <ddstreet@ieee.org>");
+-MODULE_DESCRIPTION("842 H/W Compression driver for IBM PowerNV processors");
++MODULE_DESCRIPTION("H/W Compression driver for IBM PowerNV processors");
+ MODULE_ALIAS_CRYPTO("842");
+ MODULE_ALIAS_CRYPTO("842-nx");
+ 
+-- 
+2.25.3
+
